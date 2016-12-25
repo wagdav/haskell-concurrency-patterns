@@ -1,0 +1,58 @@
+name:                concurrent-tests
+version:             0.1.0.0
+synopsis:            Initial project template from stack
+description:         Please see README.md
+homepage:            https://github.com/githubuser/concurrent-tests#readme
+license:             BSD3
+license-file:        LICENSE
+author:              David Wagner 
+maintainer:          wagdav@gmail.com
+copyright:           2016 David Wagner
+category:            Web
+build-type:          Simple
+extra-source-files:  README.md
+cabal-version:       >=1.10
+
+library
+  hs-source-dirs:      src
+  exposed-modules:     Lib
+  build-depends:       base >= 4.7 && < 5
+                     , async
+                     , random
+  default-language:    Haskell2010
+
+executable search10
+  hs-source-dirs:      app
+  main-is:             Search10.hs
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+  build-depends:       base
+                     , concurrent-tests
+  default-language:    Haskell2010
+
+executable search20
+  hs-source-dirs:      app
+  main-is:             Search20.hs
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+  build-depends:       base
+                     , concurrent-tests
+  default-language:    Haskell2010
+
+executable search21
+  hs-source-dirs:      app
+  main-is:             Search21.hs
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+  build-depends:       base
+                     , concurrent-tests
+  default-language:    Haskell2010
+
+executable search30
+  hs-source-dirs:      app
+  main-is:             Search30.hs
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+  build-depends:       base
+                     , concurrent-tests
+  default-language:    Haskell2010
+
+source-repository head
+  type:     git
+  location: https://github.com/githubuser/concurrent-tests
