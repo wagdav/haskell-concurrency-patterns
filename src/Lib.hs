@@ -31,26 +31,11 @@ fakeSearch query kind = do
     where
         microseconds = (* 1000)
 
--- Send requests to multiple replicas, and use the first response.
---
--- https://talks.golang.org/2012/concurrency.slide#48
-fastest :: SearchQuery -> SearchKind ->  IO String
-fastest query kind = do
-    req <- race (fakeSearch query kind) -- server 1
-                (fakeSearch query kind) -- server 2
-
-    return $ case req of
-        Left  r -> "Server1: " ++ r
-        Right r -> "Server2: " ++ r
-
 -- Helper function to print the results
 printResults :: Maybe [String] -> IO ()
 printResults req = case req of
     Just res -> print res
     Nothing  -> putStrLn "timed out"
-
-maxDelay :: Int
-maxDelay = 80 * 1000 -- us
 
 -- Invoke Web, Image, and Video searches serially, appending them to the
 -- results slice.
@@ -79,6 +64,9 @@ search21 query = do
         mapConcurrently (fakeSearch query) [Image, Web, Video]
     printResults req
 
+maxDelay :: Int
+maxDelay = 80 * 1000 -- us
+
 -- Reduce tail latency using replicated search servers.
 --
 -- https://talks.golang.org/2012/concurrency.slide#50
@@ -87,3 +75,15 @@ search30 query = do
     req <- timeout maxDelay $
         mapConcurrently (fastest query) [Image, Web, Video]
     printResults req
+
+-- Send requests to multiple replicas, and use the first response.
+--
+-- https://talks.golang.org/2012/concurrency.slide#48
+fastest :: SearchQuery -> SearchKind ->  IO String
+fastest query kind = do
+    req <- race (fakeSearch query kind) -- server 1
+                (fakeSearch query kind) -- server 2
+
+    return $ case req of
+        Left  r -> "Server1: " ++ r
+        Right r -> "Server2: " ++ r
