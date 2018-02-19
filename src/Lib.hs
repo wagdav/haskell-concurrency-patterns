@@ -5,10 +5,11 @@ module Lib
     , search30
     ) where
 
-import Control.Concurrent
-import Control.Concurrent.Async
-import System.Random
-import System.Timeout
+import Control.Concurrent.Async  (mapConcurrently, race)
+import Control.Concurrent        (threadDelay)
+import System.Random             (getStdRandom, randomR)
+import System.Timeout            (timeout)
+import Text.Printf               (printf)
 
 type SearchQuery = String
 
