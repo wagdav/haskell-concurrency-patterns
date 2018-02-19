@@ -26,11 +26,7 @@ fakeSearch :: SearchQuery -> SearchKind -> IO String
 fakeSearch query kind = do
     delayMs <- getStdRandom $ randomR (1, 100)
     threadDelay $ microseconds delayMs -- simulating random work
-
-    return $ unwords [
-        show kind, "result for ",
-        "\"" ++ query ++ "\"",
-        "in", show delayMs, "ms"]
+    return $ printf "%s results for '%s' in %d ms" (show kind) query delayMs
 
     where
         microseconds = (* 1000)
