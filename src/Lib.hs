@@ -5,8 +5,9 @@ module Lib
     , search30
     ) where
 
-import Control.Concurrent.Async  (mapConcurrently, race)
+import Control.Concurrent.Async  (mapConcurrently, async, waitAnyCancel)
 import Control.Concurrent        (threadDelay)
+import Control.Monad             (forM)
 import System.Random             (getStdRandom, randomR)
 import System.Timeout            (timeout)
 import Text.Printf               (printf)
@@ -81,9 +82,10 @@ search30 query = do
 -- https://talks.golang.org/2012/concurrency.slide#48
 fastest :: SearchQuery -> SearchKind ->  IO String
 fastest query kind = do
-    req <- race (fakeSearch query kind) -- server 1
-                (fakeSearch query kind) -- server 2
+    requests <- forM [1..numReplicas] $ \i ->
+        async $ (server i ++) <$> fakeSearch query kind
+    (_, result) <- waitAnyCancel requests
+    return result
 
-    return $ case req of
-        Left  r -> "Server1: " ++ r
-        Right r -> "Server2: " ++ r
+  where numReplicas = 3
+        server i = "Server" ++ show i ++ ": "
